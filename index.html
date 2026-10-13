@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GTGdle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1 class="logo">GTGdle</h1>
+      <p class="subtitle">Guess the video game in 10 tries</p>
+      <div class="mode-toggle">
+        <button class="mode-btn" id="btn-daily" type="button">Daily</button>
+        <button class="mode-btn" id="btn-free" type="button">Free Play</button>
+      </div>
+      <p class="day-label" id="day-label"></p>
+      <div class="pips" id="pips"></div>
+    </header>
+
+    <div class="error-banner" id="error-banner" hidden>Game data failed to load. Run <code>npm run build-data</code> and refresh.</div>
+
+    <section class="search" id="search">
+      <input id="guess-input" type="text" placeholder="Type a game…" autocomplete="off" spellcheck="false"
+             aria-label="Guess a game" aria-controls="suggestions" aria-autocomplete="list">
+      <ul class="suggestions" id="suggestions" role="listbox" hidden></ul>
+      <p class="flash" id="flash" aria-live="polite"></p>
+    </section>
+
+    <section class="board">
+      <div class="board-inner">
+        <div class="grid-header">
+          <div class="col-header" title="Release year. Green = exact · Yellow = within 3 years · Arrow points toward the answer.">Year</div>
+          <div class="col-header" title="Green = shares a primary tag (shown) · Yellow = shares any tag (shown).">Tags</div>
+          <div class="col-header" title="Green = same platforms · Yellow = some overlap (shared shown).">Platform</div>
+          <div class="col-header" title="Green = shares a developer.">Developer</div>
+          <div class="col-header" title="Green = same franchise or series.">Franchise</div>
+          <div class="col-header" title="Metacritic score. Green = exact · Yellow = within 5 · Arrow points toward the answer.">Metacritic</div>
+        </div>
+        <div id="rows"></div>
+      </div>
+    </section>
+
+    <div class="modal" id="result-modal" hidden>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="result-title">
+        <button class="modal-close" id="btn-close" type="button" aria-label="Close">×</button>
+        <h2 id="result-title"></h2>
+        <p class="result-answer" id="result-answer"></p>
+        <div class="result-actions">
+          <button class="primary-btn" id="btn-share" type="button">Share</button>
+          <button class="primary-btn" id="btn-new" type="button">New game</button>
+        </div>
+        <pre class="share-fallback" id="share-fallback" hidden></pre>
+        <p class="share-msg" id="share-msg" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="logic.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

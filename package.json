@@ -1,0 +1,10 @@
+{
+  "name": "gtgdle",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Spotle-style daily video game guessing game",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "build-data": "node scripts/build-data.js"
+  }
+}
