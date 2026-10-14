@@ -38,6 +38,32 @@ module.exports = {
     'NASCAR', 'MotoGP', 'WRC', 'Le Mans Ultimate', 'EA Sports WRC',
   ],
 
+  // Developer column yellow: extra umbrellas for second-party / historical ties that IGDB's
+  // current-ownership parent chain doesn't capture. Matched on the exact developer name.
+  partnerGroups: {
+    Nintendo: [
+      'Game Freak', 'Intelligent Systems', 'Creatures Inc.', 'Camelot Software Planning', 'Camelot', 'Rare',
+      'Genius Sonority', 'Silicon Knights', 'Factor 5', 'Good-Feel', 'Grezzo', 'Sora', 'Project Sora',
+      'Vanpool', 'Jupiter Corporation', 'Retro Studios', 'Next Level Games', 'HAL Laboratory', 'Monolith Soft',
+    ],
+    Microsoft: ['Bungie', 'Bungie West', 'Lionhead Studios', 'Ensemble Studios', 'Rare'],
+    Sony: [
+      'Insomniac Games', 'Naughty Dog', 'Quantic Dream', 'Ready At Dawn', 'Sucker Punch Productions',
+      'Media Molecule', 'Guerrilla Games', 'SCE Santa Monica Studio', 'Santa Monica Studio', 'SCE Japan Studio',
+      'SIE Japan Studio', 'Japan Studio', 'Polyphony Digital', 'Housemarque', 'Bluepoint Games', 'Evolution Studios',
+    ],
+  },
+
+  // Merge different top-level owner names into one umbrella (applied to the end of IGDB parent chains).
+  groupAliases: {
+    'Xbox Game Studios': 'Microsoft', 'Microsoft Studios': 'Microsoft', 'Microsoft Game Studios': 'Microsoft',
+    'Sony Interactive Entertainment': 'Sony', 'Sony Computer Entertainment': 'Sony', 'Sony Group': 'Sony',
+    'Sony Corporation': 'Sony', 'Square Enix Holdings': 'Square Enix', 'Square': 'Square Enix', 'Enix': 'Square Enix',
+    'Bandai Namco Holdings': 'Bandai Namco', 'Bandai Namco Entertainment': 'Bandai Namco', 'Namco': 'Bandai Namco',
+    'Sega Sammy Holdings': 'Sega', 'Embracer Group AB': 'Embracer Group',
+    'Tencent Holdings': 'Tencent', 'Tencent Games': 'Tencent', 'Ubisoft Entertainment': 'Ubisoft',
+  },
+
   // Tags on more than this share of games are moved from primary to secondary (too broad to be a green clue).
   broadTagThreshold: 0.25,
 

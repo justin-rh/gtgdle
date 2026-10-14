@@ -25,7 +25,7 @@ async function getTwitchToken(clientId, clientSecret, fetchFn = fetch) {
 
 const IGDB_PAGE = 500;
 const IGDB_FIELDS = [
-  'name', 'first_release_date', 'total_rating_count', 'aggregated_rating',
+  'name', 'first_release_date', 'total_rating_count', 'aggregated_rating', 'summary', 'storyline', 'cover.image_id',
   'genres.name', 'themes.name', 'keywords.name', 'platforms.name',
   'involved_companies.developer', 'involved_companies.company.name',
   'franchises.name', 'collections.name',
@@ -63,6 +63,40 @@ async function fetchIgdbCandidates({ clientId, token, cache, total = 5000, fetch
   return all;
 }
 
+// Fetches companies by id, then their parents, until every chain ends. Each company is cached
+// individually; ids IGDB doesn't return are cached as { name: null, parent: null }.
+async function fetchCompanies(ids, { clientId, token, cache, fetchFn = fetch, delayMs = 300 }) {
+  const companies = new Map();
+  let pending = [...new Set(ids)];
+  while (pending.length) {
+    const missing = [];
+    for (const id of pending) {
+      const hit = cache.get(`company-${id}`);
+      if (hit !== undefined) companies.set(id, hit);
+      else missing.push(id);
+    }
+    for (let i = 0; i < missing.length; i += IGDB_PAGE) {
+      const chunk = missing.slice(i, i + IGDB_PAGE);
+      const res = await fetchFn('https://api.igdb.com/v4/companies', {
+        method: 'POST',
+        headers: { 'Client-ID': clientId, Authorization: `Bearer ${token}`, Accept: 'application/json' },
+        body: `fields name,parent; where id = (${chunk.join(',')}); limit ${IGDB_PAGE};`,
+      });
+      if (!res.ok) throw new Error(`IGDB companies request failed: HTTP ${res.status} ${await res.text()}`);
+      const byId = new Map((await res.json()).map(c => [c.id, c]));
+      for (const id of chunk) {
+        const c = byId.get(id);
+        const company = { id, name: (c && c.name) || null, parent: (c && c.parent) || null };
+        cache.set(`company-${id}`, company);
+        companies.set(id, company);
+      }
+      await sleep(delayMs);
+    }
+    pending = [...new Set([...companies.values()].map(c => c.parent).filter(p => p && !companies.has(p)))];
+  }
+  return companies;
+}
+
 async function fetchJsonWithRetry(url, fetchFn, retryDelayMs) {
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
@@ -95,4 +129,4 @@ async function fetchSteamData(appId, { cache, fetchFn = fetch, spyDelayMs = 1000
   };
 }
 
-module.exports = { createCache, getTwitchToken, fetchIgdbCandidates, fetchSteamData };
+module.exports = { createCache, getTwitchToken, fetchIgdbCandidates, fetchCompanies, fetchSteamData };

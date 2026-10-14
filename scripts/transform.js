@@ -1,6 +1,8 @@
 'use strict';
 // Pure transforms from raw IGDB/Steam responses to GAMES entries. No I/O.
-const { normalize } = require('../logic.js');
+const { normalize, summarySnippet } = require('../logic.js');
+
+const STORED_SUMMARY_MAX = 600;
 
 function startsWithWords(text, prefix) {
   const t = normalize(text), p = normalize(prefix);
@@ -126,7 +128,39 @@ function developers(raw) {
   return out;
 }
 
-function buildEntry(raw, steam, cfg, onUnmapped) {
+function developerCompanyIds(raw) {
+  const ids = [];
+  for (const c of raw.involved_companies || []) {
+    const id = c.developer && c.company && c.company.id;
+    if (id && !ids.includes(id)) ids.push(id);
+  }
+  return ids;
+}
+
+// Umbrellas for the Developer column's yellow: each developer's top-level owner (walking IGDB
+// parents; a company with no parent is its own umbrella), plus hand-kept partner umbrellas
+// (second-party / historical ties) from cfg.partnerGroups, with cfg.groupAliases merging names.
+function developerGroups(raw, companies, cfg) {
+  const aliases = cfg.groupAliases || {};
+  const partners = Object.entries(cfg.partnerGroups || {});
+  const groups = new Set();
+  for (const c of raw.involved_companies || []) {
+    if (!c.developer || !c.company || !c.company.name) continue;
+    let name = c.company.name;
+    const seen = new Set();
+    for (let id = c.company.id; companies.has(id) && !seen.has(id); id = companies.get(id).parent) {
+      seen.add(id);
+      if (companies.get(id).name) name = companies.get(id).name;
+    }
+    groups.add(aliases[name] || name);
+    for (const [group, members] of partners) {
+      if (members.some(m => normalize(m) === normalize(c.company.name))) groups.add(group);
+    }
+  }
+  return [...groups].sort();
+}
+
+function buildEntry(raw, steam, cfg, onUnmapped, companies = new Map()) {
   const { primaryTags, secondaryTags } = deriveTags(raw, steam.tags, cfg);
   const igdbScore = raw.aggregated_rating != null ? Math.round(raw.aggregated_rating) : null;
   return {
@@ -137,8 +171,11 @@ function buildEntry(raw, steam, cfg, onUnmapped) {
     secondaryTags,
     platforms: normalizePlatforms(raw, cfg, onUnmapped),
     developers: developers(raw),
+    developerGroups: developerGroups(raw, companies, cfg),
     franchise: franchiseNames(raw)[0] ?? null,
     metacritic: steam.metacritic ?? igdbScore,
+    summary: summarySnippet(raw.summary || raw.storyline, STORED_SUMMARY_MAX),
+    coverId: (raw.cover && raw.cover.image_id) || null,
   };
 }
 
@@ -164,6 +201,6 @@ function steamMetacritic(json, appId) {
 
 module.exports = {
   startsWithWords, containsWords, releaseYear, classify, selectGames,
-  cleanTagList, deriveTags, demoteBroadTags, normalizePlatforms, buildEntry,
-  steamAppId, steamSpyTags, steamMetacritic,
+  cleanTagList, deriveTags, demoteBroadTags, normalizePlatforms, buildEntry, developerCompanyIds, developerGroups,
+  steamAppId, steamSpyTags, steamMetacritic, STORED_SUMMARY_MAX,
 };

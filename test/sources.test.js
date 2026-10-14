@@ -100,3 +100,27 @@ test('IGDB query does not request the deprecated external_games.category field',
   assert.doesNotMatch(fetchFn.calls[0].opts.body, /external_games\.category/);
   assert.match(fetchFn.calls[0].opts.body, /external_games\.external_game_source/);
 });
+
+test('IGDB query requests summary, storyline, and cover image id', async () => {
+  const fetchFn = fakeFetch(() => jsonRes([]));
+  await S.fetchIgdbCandidates({ clientId: 'c', token: 't', cache: memCache(), fetchFn, delayMs: 0, log: () => {} });
+  for (const f of ['summary', 'storyline', 'cover.image_id']) assert.match(fetchFn.calls[0].opts.body, new RegExp(`[ ,]${f.replace('.', '\\.')}[,;]`));
+});
+
+test('fetchCompanies follows parents until the chain ends and caches each company', async () => {
+  const db = { 1: { id: 1, name: 'Rare', parent: 2 }, 2: { id: 2, name: 'Xbox Game Studios', parent: 3 }, 3: { id: 3, name: 'Microsoft' } };
+  const fetchFn = fakeFetch((url, opts) => {
+    assert.equal(url, 'https://api.igdb.com/v4/companies');
+    const ids = opts.body.match(/where id = \(([^)]*)\)/)[1].split(',').map(Number);
+    return jsonRes(ids.filter(id => db[id]).map(id => db[id]));
+  });
+  const cache = memCache();
+  const opts = { clientId: 'c', token: 't', cache, fetchFn, delayMs: 0 };
+  const map = await S.fetchCompanies([1, 404], opts);
+  assert.deepEqual(map.get(1), { id: 1, name: 'Rare', parent: 2 });
+  assert.deepEqual(map.get(3), { id: 3, name: 'Microsoft', parent: null });
+  assert.deepEqual(map.get(404), { id: 404, name: null, parent: null });
+  assert.equal(fetchFn.calls.length, 3);
+  await S.fetchCompanies([1], opts);
+  assert.equal(fetchFn.calls.length, 3, 'served from cache');
+});

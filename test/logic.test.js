@@ -171,7 +171,7 @@ test('buildShareText: loss shows X and free play label', () => {
 
 test('serializeState / parseSavedState round-trip', () => {
   const raw = L.serializeState([SAMPLE[1], SAMPLE[4]]);
-  assert.deepEqual(L.parseSavedState(raw, SAMPLE), { guesses: [SAMPLE[1], SAMPLE[4]] });
+  assert.deepEqual(L.parseSavedState(raw, SAMPLE), { guesses: [SAMPLE[1], SAMPLE[4]], hints: [] });
 });
 
 test('parseSavedState rejects corrupt or stale data', () => {
@@ -191,7 +191,184 @@ test('searchGames: matches names typed without spaces or hyphens', () => {
 
 test('saved state is discarded when the answer changed (data regenerated)', () => {
   const raw = L.serializeState([SAMPLE[1]], SAMPLE[0]);
-  assert.deepEqual(L.parseSavedState(raw, SAMPLE, SAMPLE[0]), { guesses: [SAMPLE[1]] });
+  assert.deepEqual(L.parseSavedState(raw, SAMPLE, SAMPLE[0]), { guesses: [SAMPLE[1]], hints: [] });
   assert.equal(L.parseSavedState(raw, SAMPLE, SAMPLE[2]), null);
   assert.equal(L.parseSavedState(JSON.stringify({ guessIds: [2] }), SAMPLE, SAMPLE[0]), null);
+});
+
+test('hintUnlocked: summary at 5 guesses, cover at 8, only while playing', () => {
+  assert.equal(L.SUMMARY_HINT_AFTER, 5);
+  assert.equal(L.COVER_HINT_AFTER, 8);
+  assert.equal(L.hintUnlocked('summary', 4, 'playing'), false);
+  assert.equal(L.hintUnlocked('summary', 5, 'playing'), true);
+  assert.equal(L.hintUnlocked('cover', 7, 'playing'), false);
+  assert.equal(L.hintUnlocked('cover', 8, 'playing'), true);
+  assert.equal(L.hintUnlocked('summary', 9, 'won'), false);
+  assert.equal(L.hintUnlocked('cover', 10, 'lost'), false);
+  assert.equal(L.hintUnlocked('bogus', 10, 'playing'), false);
+  assert.equal(L.hintUnlocked('toString', 10, 'playing'), false);
+});
+
+test('coverPixelWidth: blocky at 8, clearer at 9+, null otherwise', () => {
+  assert.equal(L.coverPixelWidth(7, 'playing'), null);
+  assert.equal(L.coverPixelWidth(8, 'playing'), 10);
+  assert.equal(L.coverPixelWidth(9, 'playing'), 24);
+  assert.equal(L.coverPixelWidth(9, 'won'), null);
+});
+
+test('coverUrl builds the IGDB image URL or null', () => {
+  assert.equal(L.coverUrl('co1r7f'), 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1r7f.jpg');
+  assert.equal(L.coverUrl(null), null);
+});
+
+test('buildShareText appends 💡N only when hints were used', () => {
+  const base = { mode: 'daily', dateStr: '2026-10-14', results: [], won: false };
+  assert.equal(L.buildShareText(base).split('\n')[0], `${L.GAME_TITLE} #2 X/10`);
+  assert.equal(L.buildShareText({ ...base, hintsUsed: 0 }).split('\n')[0], `${L.GAME_TITLE} #2 X/10`);
+  assert.equal(L.buildShareText({ ...base, hintsUsed: 2 }).split('\n')[0], `${L.GAME_TITLE} #2 X/10 💡2`);
+  assert.equal(L.buildShareText({ ...base, mode: 'free', hintsUsed: 1 }).split('\n')[0], `${L.GAME_TITLE} (Free Play) X/10 💡1`);
+});
+
+test('saved state round-trips revealed hints; old saves and junk ids load with valid hints only', () => {
+  const answer = SAMPLE[0];
+  const raw = L.serializeState([SAMPLE[1]], answer, ['summary']);
+  assert.deepEqual(L.parseSavedState(raw, SAMPLE, answer), { guesses: [SAMPLE[1]], hints: ['summary'] });
+  const old = JSON.stringify({ answerId: answer.id, guessIds: [2] });
+  assert.deepEqual(L.parseSavedState(old, SAMPLE, answer), { guesses: [SAMPLE[1]], hints: [] });
+  const junk = JSON.stringify({ answerId: answer.id, guessIds: [2], hints: ['cover', 'nope', 'cover', 7] });
+  assert.deepEqual(L.parseSavedState(junk, SAMPLE, answer), { guesses: [SAMPLE[1]], hints: ['cover'] });
+  const notArray = JSON.stringify({ answerId: answer.id, guessIds: [2], hints: 'summary' });
+  assert.deepEqual(L.parseSavedState(notArray, SAMPLE, answer), { guesses: [SAMPLE[1]], hints: [] });
+});
+
+test('summarySnippet: whole sentences up to max, collapses whitespace', () => {
+  assert.equal(L.summarySnippet('One. Two two. Three.', 13), 'One. Two two.');
+  assert.equal(L.summarySnippet('A  b.\n\nC d.'), 'A b. C d.');
+  assert.equal(L.summarySnippet('Runs at 3.5 GHz. Fast!', 220), 'Runs at 3.5 GHz. Fast!');
+});
+
+test('summarySnippet: a single over-long sentence is cut at a word with an ellipsis', () => {
+  assert.equal(L.summarySnippet('alpha beta gamma delta.', 12), 'alpha beta…');
+  assert.ok(L.summarySnippet('x'.repeat(300)).length <= 220);
+});
+
+test('summarySnippet: null or blank gives null', () => {
+  assert.equal(L.summarySnippet(null), null);
+  assert.equal(L.summarySnippet('   '), null);
+});
+
+test('redactSummary: full name, main title, and franchise', () => {
+  const g = { name: 'Hollow Knight: Silksong', franchise: 'Hollow Knight' };
+  assert.equal(
+    L.redactSummary('Silksong is the sequel to Hollow Knight. Hollow Knight: Silksong follows Hornet.', g),
+    '▇▇▇ is the sequel to ▇▇▇. ▇▇▇ follows Hornet.',
+  );
+});
+
+test('redactSummary: possessives keep their suffix; stopwords stay', () => {
+  const g = { name: 'The Legend of Zelda: Breath of the Wild', franchise: 'The Legend of Zelda' };
+  assert.equal(
+    L.redactSummary("Zelda's kingdom of Hyrule awaits in this open world.", g),
+    "▇▇▇'s kingdom of Hyrule awaits in this open world.",
+  );
+  assert.equal(L.redactSummary('Mario explores a new world.', { name: 'Super Mario World', franchise: null }),
+    '▇▇▇ explores a new world.');
+});
+
+test('redactSummary: accent and apostrophe insensitive, numbers redacted', () => {
+  assert.equal(L.redactSummary('Pokemon Red lets you catch Pokémon.', { name: 'Pokémon Red', franchise: 'Pokémon' }),
+    '▇▇▇ lets you catch ▇▇▇.');
+  assert.equal(L.redactSummary('Assassin’s Creed follows Altaïr.', { name: "Assassin's Creed", franchise: null }),
+    '▇▇▇ follows Altaïr.');
+  assert.equal(L.redactSummary('Night City, 2077.', { name: 'Cyberpunk 2077', franchise: null }), 'Night City, ▇▇▇.');
+});
+
+test('redactSummary: whole words only', () => {
+  assert.equal(L.redactSummary('Doomed marines face doom.', { name: 'Doom', franchise: 'Doom' }), 'Doomed marines face ▇▇▇.');
+});
+
+test('logic.js uses no regex lookbehind (older Safari/iOS cannot parse it)', () => {
+  const src = require('node:fs').readFileSync(require.resolve('../logic.js'), 'utf8');
+  assert.equal(/\(\?<[=!]/.test(src), false);
+});
+
+test('summarySnippet: abbreviations do not leave a tiny fragment', () => {
+  const long = 'L.A. Noire is a detective thriller set in 1947 Los Angeles, where an officer works his way up the ranks of the police department, solving murders, chasing leads, and interrogating suspects across a sprawling and faithfully recreated city.';
+  const s = L.summarySnippet(long);
+  assert.ok(s.length >= 60 && s.length <= 220, `got ${JSON.stringify(s)}`);
+  assert.ok(s.startsWith('L.A. Noire is a detective'));
+  assert.equal(L.summarySnippet('Dr. Robotnik returns. Short.'), 'Dr. Robotnik returns. Short.');
+});
+
+test('redactSummary: plural and -es forms of title words are redacted', () => {
+  assert.equal(L.redactSummary('K. Rool kidnapped the Kongs!', { name: 'Donkey Kong 64', franchise: null }), 'K. Rool kidnapped the ▇▇▇!');
+  assert.equal(L.redactSummary('Starring the Royales.', { name: 'Clash Royale', franchise: null }), 'Starring the ▇▇▇.');
+  assert.equal(L.redactSummary('Ancient Marches.', { name: 'March', franchise: null }), 'Ancient ▇▇▇.');
+  assert.equal(L.redactSummary('Doomed marines face doom.', { name: 'Doom', franchise: 'Doom' }), 'Doomed marines face ▇▇▇.');
+});
+
+test('compareDevelopers: shared parent company or partner is yellow and names the umbrella', () => {
+  const a = game({ developers: ['Nintendo EPD Production Group No. 3'], developerGroups: ['Nintendo'] });
+  assert.deepEqual(L.compareDevelopers(game({ developers: ['Rare'], developerGroups: ['Microsoft', 'Nintendo'] }), a),
+    { status: 'yellow', display: 'Rare · Nintendo' });
+  assert.deepEqual(L.compareDevelopers(game({ developers: ['Valve'], developerGroups: ['Valve'] }), a),
+    { status: 'gray', display: 'Valve' });
+  assert.deepEqual(L.compareDevelopers(game({ developers: ['Nintendo EPD Production Group No. 3'], developerGroups: ['Nintendo'] }), a),
+    { status: 'green', display: 'Nintendo EPD Production Group No. 3' });
+  assert.deepEqual(L.compareDevelopers(game({ developers: ['Rare'] }), a), { status: 'gray', display: 'Rare' });
+});
+
+const WORDS = L.buildWordContext([
+  ...Array.from({ length: 5 }, () => ({ summary: 'from the help explore features one of players dog', primaryTags: ['JRPG', 'Open World'] })),
+  { summary: 'Mario jumps. Kratos returns.', primaryTags: ['RPG'] },
+]);
+
+test('buildWordContext: common = words seen lowercase; keep = primary tags on 5+ games', () => {
+  assert.ok(WORDS.common.has('from') && WORDS.common.has('explore'));
+  assert.ok(!WORDS.common.has('mario'));
+  assert.ok(WORDS.keep.has('jrpg'));
+  assert.ok(!WORDS.keep.has('rpg'), 'RPG is on only 1 game');
+});
+
+test('censorProperNouns: mid-sentence capitalized runs become one block', () => {
+  assert.equal(L.censorProperNouns('From Mark Cerny, one of the greatest minds, ▇▇▇ invites players.', WORDS),
+    'From ▇▇▇, one of the greatest minds, ▇▇▇ invites players.');
+});
+
+test('censorProperNouns: sentence-start words are censored only if never seen lowercase', () => {
+  assert.equal(L.censorProperNouns('Kratos returns. The gods await. Explore Midgard.', WORDS),
+    '▇▇▇ returns. The gods await. Explore ▇▇▇.');
+  assert.equal(L.censorProperNouns('Features: Explore the world.', WORDS), 'Features: Explore the world.');
+});
+
+test('censorProperNouns: keeps tag words, numbers, single letters, possessive suffix', () => {
+  assert.equal(L.censorProperNouns('A JRPG set in Tokyo.', WORDS), 'A JRPG set in ▇▇▇.');
+  assert.equal(L.censorProperNouns('A 2D game for PlayStation 4.', WORDS), 'A 2D game for ▇▇▇ 4.');
+  assert.equal(L.censorProperNouns("Help Mario's friends.", WORDS), "Help ▇▇▇'s friends.");
+});
+
+test('summaryHintText: names censored until 7 guesses; title stays redacted after', () => {
+  const g = { name: 'Knack', franchise: 'Knack', summary: 'From Mark Cerny, Knack is a fun-filled adventure for players of one mind and heart.' };
+  assert.equal(L.PROPER_NOUN_REVEAL_AFTER, 7);
+  assert.equal(L.summaryHintText(g, 5, WORDS), 'From ▇▇▇, ▇▇▇ is a fun-filled adventure for players of one mind and heart.');
+  assert.equal(L.summaryHintText(g, 7, WORDS), 'From Mark Cerny, ▇▇▇ is a fun-filled adventure for players of one mind and heart.');
+  assert.equal(L.summaryHintText({ ...g, summary: null }, 5, WORDS), null);
+});
+
+test('censorProperNouns: a sentence-start word used mostly as a name elsewhere is censored (Link)', () => {
+  const ctx = L.buildWordContext([
+    { summary: 'click the link here', primaryTags: [] },
+    { summary: 'Princess Zelda and Link fight. Save Link today.', primaryTags: [] },
+  ]);
+  assert.equal(L.censorProperNouns('Link can travel anywhere.', ctx), '▇▇▇ can travel anywhere.');
+});
+
+test('censorProperNouns: initials join the name that follows; lone initials stay', () => {
+  assert.equal(L.censorProperNouns('K. Rool has kidnapped them.', WORDS), '▇▇▇ has kidnapped them.');
+  assert.equal(L.censorProperNouns('Players fought an A.I. system.', WORDS), 'Players fought an A.I. system.');
+  assert.equal(L.censorProperNouns('From novelist George R. R. Martin is here.', WORDS), 'From novelist ▇▇▇ is here.');
+});
+
+test('censorProperNouns: trailing initials after a name join its block', () => {
+  assert.equal(L.censorProperNouns('From novelist George R. R.', WORDS), 'From novelist ▇▇▇.');
 });

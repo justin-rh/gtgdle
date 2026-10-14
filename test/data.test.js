@@ -30,10 +30,15 @@ test('generated data invariants', { skip }, () => {
     }
     assert.ok(g.franchise === null || typeof g.franchise === 'string', `${where} franchise`);
     assert.ok(g.metacritic === null || (Number.isInteger(g.metacritic) && g.metacritic >= 0 && g.metacritic <= 100), `${where} metacritic`);
+    assert.ok(g.summary === null || (typeof g.summary === 'string' && g.summary.length <= 600), `${where} summary`);
+    assert.ok(g.coverId === null || (typeof g.coverId === 'string' && g.coverId.length > 0), `${where} coverId`);
     if (!config.forceInclude.includes(g.id)) {
       const names = [g.name, g.franchise].filter(Boolean);
       const hit = config.blockedFranchises.find(b => names.some(n => startsWithWords(n, b)));
       assert.equal(hit, undefined, `${where} is blocklisted (${hit})`);
     }
   }
+  const share = key => GAMES.filter(g => g[key]).length / GAMES.length;
+  assert.ok(share('coverId') >= 0.9, `only ${Math.round(share('coverId') * 100)}% have covers`);
+  assert.ok(share('summary') >= 0.8, `only ${Math.round(share('summary') * 100)}% have summaries`);
 });

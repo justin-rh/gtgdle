@@ -75,8 +75,8 @@
 696	FIFA Soccer 07	blocked franchise: FIFA
 705	FIFA: Road to World Cup 98	blocked franchise: FIFA
 118218	Tom Clancy's Ghost Recon: Breakpoint	blocked franchise: Tom Clancy's Ghost Recon
-165067	Call of Duty: Vanguard	blocked franchise: Call of Duty
 7967	Colin McRae Rally	racing sim
+165067	Call of Duty: Vanguard	blocked franchise: Call of Duty
 5597	Assetto Corsa	racing sim
 1293	Tom Clancy's Ghost Recon: Future Soldier	blocked franchise: Tom Clancy's Ghost Recon
 699	FIFA 99	blocked franchise: FIFA

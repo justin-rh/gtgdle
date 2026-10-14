@@ -126,8 +126,9 @@ test('buildEntry: full shape, Steam score preferred over IGDB rating', () => {
   assert.deepEqual(T.buildEntry(r, { tags: null, metacritic: null }, CFG), {
     id: 72, name: 'Portal 2', year: 2016,
     primaryTags: ['Puzzle'], secondaryTags: [],
-    platforms: ['PC', 'PS4'], developers: ['Valve'],
+    platforms: ['PC', 'PS4'], developers: ['Valve'], developerGroups: ['Valve'],
     franchise: 'Portal', metacritic: 95,
+    summary: null, coverId: null,
   });
   assert.equal(T.buildEntry(r, { tags: null, metacritic: 88 }, CFG).metacritic, 88);
   assert.equal(T.buildEntry(raw(), { tags: null, metacritic: null }, CFG).metacritic, null);
@@ -188,4 +189,44 @@ test('demoteBroadTags keeps secondary at 15 or fewer', () => {
   const { games } = T.demoteBroadTags([{ id: 1, primaryTags: ['Action'], secondaryTags: sec }], 0.25);
   assert.equal(games[0].secondaryTags.length, 15);
   assert.equal(games[0].secondaryTags[0], 'Action');
+});
+
+test('buildEntry: summary from summary, else storyline, truncated to 600; coverId from cover', () => {
+  const none = { tags: null, metacritic: null };
+  assert.equal(T.buildEntry(raw({ summary: 'A  short   summary.' }), none, CFG).summary, 'A short summary.');
+  assert.equal(T.buildEntry(raw({ storyline: 'Only a storyline.' }), none, CFG).summary, 'Only a storyline.');
+  assert.equal(T.buildEntry(raw({ summary: 'Sum.', storyline: 'Story.' }), none, CFG).summary, 'Sum.');
+  const long = Array.from({ length: 40 }, (_, i) => `Sentence number ${i} is here.`).join(' ');
+  const stored = T.buildEntry(raw({ summary: long }), none, CFG).summary;
+  assert.ok(stored.length <= T.STORED_SUMMARY_MAX && stored.endsWith('.'), stored.length);
+  assert.equal(T.buildEntry(raw({ cover: { image_id: 'co1r7f' } }), none, CFG).coverId, 'co1r7f');
+  assert.equal(T.buildEntry(raw(), none, CFG).coverId, null);
+});
+
+test('developerGroups: walks parent chain to the top owner, adds partner umbrellas, applies aliases', () => {
+  const companies = new Map([
+    [1, { id: 1, name: 'Rare', parent: 2 }],
+    [2, { id: 2, name: 'Xbox Game Studios', parent: 3 }],
+    [3, { id: 3, name: 'Microsoft', parent: null }],
+    [4, { id: 4, name: 'Naughty Dog', parent: 5 }],
+    [5, { id: 5, name: 'Sony Interactive Entertainment', parent: null }],
+    [6, { id: 6, name: 'Loop A', parent: 7 }],
+    [7, { id: 7, name: 'Loop B', parent: 6 }],
+  ]);
+  const cfg = { ...CFG, partnerGroups: { Nintendo: ['Rare', 'Game Freak'] }, groupAliases: { 'Sony Interactive Entertainment': 'Sony' } };
+  const dev = (id, name) => ({ developer: true, company: { id, name } });
+  assert.deepEqual(T.developerGroups(raw({ involved_companies: [dev(1, 'Rare')] }), companies, cfg), ['Microsoft', 'Nintendo']);
+  assert.deepEqual(T.developerGroups(raw({ involved_companies: [dev(4, 'Naughty Dog')] }), companies, cfg), ['Sony']);
+  assert.deepEqual(T.developerGroups(raw({ involved_companies: [dev(99, 'Game Freak')] }), companies, cfg), ['Game Freak', 'Nintendo']);
+  assert.equal(T.developerGroups(raw({ involved_companies: [dev(6, 'Loop A')] }), companies, cfg).length, 1);
+  assert.deepEqual(T.developerGroups(raw({ involved_companies: [{ developer: false, company: { id: 1, name: 'Rare' } }] }), companies, cfg), []);
+});
+
+test('developerCompanyIds lists unique developer company ids', () => {
+  const r = raw({ involved_companies: [
+    { developer: true, company: { id: 1, name: 'A' } },
+    { developer: false, company: { id: 2, name: 'B' } },
+    { developer: true, company: { id: 1, name: 'A' } },
+  ] });
+  assert.deepEqual(T.developerCompanyIds(r), [1]);
 });

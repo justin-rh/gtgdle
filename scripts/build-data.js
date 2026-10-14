@@ -11,8 +11,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const config = require('./config.js');
-const { selectGames, buildEntry, steamAppId, demoteBroadTags } = require('./transform.js');
-const { createCache, getTwitchToken, fetchIgdbCandidates, fetchSteamData } = require('./sources.js');
+const { selectGames, buildEntry, steamAppId, demoteBroadTags, developerCompanyIds } = require('./transform.js');
+const { createCache, getTwitchToken, fetchIgdbCandidates, fetchCompanies, fetchSteamData } = require('./sources.js');
 
 const ROOT = path.join(__dirname, '..');
 const POOL_SIZE = 3000;
@@ -43,6 +43,8 @@ async function main() {
   const token = await getTwitchToken(clientId, clientSecret);
   const raws = await fetchIgdbCandidates({ clientId, token, cache, total: CANDIDATES });
   const { kept, excluded } = selectGames(raws, config, POOL_SIZE);
+  const companies = await fetchCompanies(kept.flatMap(developerCompanyIds), { clientId, token, cache });
+  console.log(`Companies: ${companies.size} (developers + parent chains)`);
 
   const unmapped = new Map();
   const onUnmapped = name => unmapped.set(name, (unmapped.get(name) || 0) + 1);
@@ -56,7 +58,7 @@ async function main() {
       steam = await fetchSteamData(appId, { cache });
       if (steam.failed) console.warn(`  Steam fetch failed for ${raw.name} (app ${appId}); using IGDB fallback`);
     }
-    const entry = buildEntry(raw, steam, config, onUnmapped);
+    const entry = buildEntry(raw, steam, config, onUnmapped, companies);
     if (!entry.primaryTags.length) { excluded.push({ id: raw.id, name: raw.name, reason: 'no tags' }); continue; }
     if (steam.tags && steam.tags.length) withSteamTags++;
     games.push(entry);

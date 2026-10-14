@@ -12,6 +12,7 @@
   <div id="app">
     <header>
       <h1 class="logo">GTGdle</h1>
+      <button class="help-btn" id="btn-help" type="button" aria-label="How to play" title="How to play">?</button>
       <p class="subtitle">Guess the video game in 10 tries</p>
       <div class="mode-toggle">
         <button class="mode-btn" id="btn-daily" type="button">Daily</button>
@@ -29,6 +30,17 @@
       <ul class="suggestions" id="suggestions" role="listbox" hidden></ul>
       <p class="flash" id="flash" aria-live="polite"></p>
     </section>
+    <section class="hints" id="hints" hidden>
+      <div class="hint" id="hint-summary" hidden>
+        <button class="hint-btn" id="btn-hint-summary" type="button">💡 Show summary hint</button>
+        <p class="hint-text" id="hint-summary-text" hidden></p>
+      </div>
+      <div class="hint" id="hint-cover" hidden>
+        <button class="hint-btn" id="btn-hint-cover" type="button">💡 Show cover hint</button>
+        <canvas class="hint-cover" id="hint-cover-canvas" hidden></canvas>
+        <p class="hint-text" id="hint-cover-msg" hidden></p>
+      </div>
+    </section>
 
     <section class="board">
       <div class="board-inner">
@@ -44,9 +56,31 @@
       </div>
     </section>
 
+    <div class="modal" id="guide-modal" hidden>
+      <div class="modal-card guide-card" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+        <button class="modal-close" id="btn-guide-close" type="button" aria-label="Close">×</button>
+        <h2 id="guide-title">How to play</h2>
+        <p>Guess the video game in <span data-const="MAX_GUESSES"></span> tries. Each guess shows how it compares to the answer.</p>
+        <table class="guide-table">
+          <thead><tr><th>Column</th><th><span class="swatch green"></span>Green</th><th><span class="swatch yellow"></span>Yellow</th></tr></thead>
+          <tbody>
+            <tr><td>Year</td><td>Exact year</td><td>Within <span data-const="YEAR_YELLOW_DELTA"></span> years. ↑/↓ points toward the answer.</td></tr>
+            <tr><td>Tags</td><td>Shares a primary tag (shown)</td><td>Shares any tag (shown)</td></tr>
+            <tr><td>Platform</td><td>Same platforms</td><td>Some overlap (shared platforms shown)</td></tr>
+            <tr><td>Developer</td><td>Shares a developer</td><td>Same parent company or partner (e.g. two Nintendo studios, or Rare and Bethesda under Microsoft). The shared owner is shown.</td></tr>
+            <tr><td>Franchise</td><td>Same series</td><td>—</td></tr>
+            <tr><td>Metacritic</td><td>Exact score</td><td>Within <span data-const="SCORE_YELLOW_DELTA"></span>. ↑/↓ points toward the answer. N/A = no score.</td></tr>
+          </tbody>
+        </table>
+        <p class="guide-note">Gray means no match.</p>
+        <h3>Hints</h3>
+        <p>After <span data-const="SUMMARY_HINT_AFTER"></span> guesses you can reveal a summary of the game (title and names blanked out; names are revealed after <span data-const="PROPER_NOUN_REVEAL_AFTER"></span> guesses). After <span data-const="COVER_HINT_AFTER"></span> guesses you can reveal a pixelated cover that sharpens on your next guess. Hints you use are noted in your share (💡).</p>
+      </div>
+    </div>
     <div class="modal" id="result-modal" hidden>
       <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="result-title">
         <button class="modal-close" id="btn-close" type="button" aria-label="Close">×</button>
+        <img class="result-cover" id="result-cover" alt="Cover art" hidden>
         <h2 id="result-title"></h2>
         <p class="result-answer" id="result-answer"></p>
         <div class="result-actions">
