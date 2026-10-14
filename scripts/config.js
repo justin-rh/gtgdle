@@ -18,8 +18,28 @@ module.exports = {
     'Rocket League', 'Wii Sports', 'Mario Tennis', 'Mario Golf', 'Mario Strikers', 'Mario Power Tennis',
     'Mario Superstar Baseball', 'Mario Super Sluggers', 'Punch-Out', "Tony Hawk's", 'NBA Jam',
     'Windjammers', 'Mutant League', 'Mario & Sonic', 'Golf Story', 'OlliOlli', 'Skate',
-    'Sega Superstars Tennis', 'Mario Hoops', 'Mario Sports',
+    'Sega Superstars Tennis', 'Mario Hoops', 'Mario Sports', 'Nintendo Switch Sports', 'NBA Street',
+    // Arcade racers (IGDB files most racing under Sport). Sims are handled by racingSims below.
+    'Forza Horizon', 'Need for Speed', 'Dirt', 'Grid', 'FlatOut', 'Blur', 'Wreckfest', 'Trackmania',
+    'Re-Volt', 'Excitebike', 'Trials', 'Sonic & All-Stars Racing', 'Crash Tag Team Racing',
+    'Horizon Chase', "Rock n' Roll Racing", 'Wave Race', '1080', 'SSX', 'Steep', 'Descenders',
+    'Lonely Mountains',
+    // Not sports at all — IGDB genre misfires.
+    'Yakuza', 'Jet Set Radio', 'Jet Grind Radio', 'Beat Saber', 'VRChat', 'Rec Room', 'Nidhogg', 'Pong',
+    'Punch Club', "Alto's Adventure", 'My Summer Car', 'Knockout City', 'Lethal League', 'Def Jam',
+    'Poker Night', 'Wii Play', 'Wii Fit', 'Ring Fit', 'Golf With Your Friends', 'Quidditch World Cup',
+    'Inazuma Eleven', 'theHunter',
   ],
+
+  // Racing sims: excluded regardless of genre if the name STARTS WITH one of these.
+  racingSims: [
+    'Gran Turismo', 'Forza Motorsport', 'Project CARS', 'Assetto Corsa', 'Dirt Rally', 'Colin McRae Rally',
+    'iRacing', 'rFactor', 'RaceRoom', 'Automobilista', 'Richard Burns Rally', 'TOCA', 'GT Legends', 'GTR',
+    'NASCAR', 'MotoGP', 'WRC', 'Le Mans Ultimate', 'EA Sports WRC',
+  ],
+
+  // Tags on more than this share of games are moved from primary to secondary (too broad to be a green clue).
+  broadTagThreshold: 0.25,
 
   // IGDB ids. forceInclude beats every exclusion rule; forceExclude always drops.
   forceInclude: [],
@@ -43,6 +63,23 @@ module.exports = {
     'Atari 2600': 'Atari', 'TurboGrafx-16/PC Engine': 'TurboGrafx-16',
     'iOS': 'Mobile', 'Android': 'Mobile', 'Windows Phone': 'Mobile',
     'Google Stadia': 'Stadia', 'Web browser': 'Browser',
+    'Amiga': 'Amiga', 'Amiga CD32': 'Amiga', 'Commodore CDTV': 'Amiga', 'Atari ST/STE': 'Atari ST',
+    'Commodore C64/128/MAX': 'C64', 'Commodore 16': 'C64', 'Commodore Plus/4': 'C64', 'Commodore VIC-20': 'C64',
+    'ZX Spectrum': 'ZX Spectrum', 'Amstrad CPC': 'Amstrad CPC', 'MSX': 'MSX', 'MSX2': 'MSX',
+    'Apple II': 'Apple II', 'Apple IIGS': 'Apple II', 'PC-9800 Series': 'PC-98', 'PC-8800 Series': 'PC-98',
+    'Sharp X68000': 'X68000', 'FM Towns': 'FM Towns', '3DO Interactive Multiplayer': '3DO',
+    'Atari Jaguar': 'Jaguar', 'Atari Jaguar CD': 'Jaguar', 'Neo Geo CD': 'Neo Geo',
+    'Turbografx-16/PC Engine CD': 'TurboGrafx-16', 'Satellaview': 'SNES', 'Super NES CD-ROM System': 'SNES',
+    '64DD': 'N64', 'WonderSwan': 'WonderSwan', 'WonderSwan Color': 'WonderSwan',
+    'Legacy Mobile Device': 'Mobile', 'Windows Mobile': 'Mobile', 'BlackBerry OS': 'Mobile', 'N-Gage': 'Mobile',
+    'Palm OS': 'Mobile', 'Windows Mixed Reality': 'VR', 'Gear VR': 'VR', 'Daydream': 'VR', 'visionOS': 'VR',
+    'Atari 8-bit': 'Atari', 'Atari 5200': 'Atari', 'Atari 7800': 'Atari',
+    'OnLive Game System': null, 'Ouya': null, 'Zeebo': null, 'Amazon Fire TV': null, 'Tapwave Zodiac': null,
+    'Legacy Computer': null, 'Philips CD-i': null, 'LaserActive': null, 'Handheld Electronic LCD': null,
+    'Acorn Archimedes': null, 'BBC Microcomputer System': null, 'Acorn Electron': null, 'Sharp X1': null,
+    'Sharp MZ-2200': null, 'FM-7': null, 'ColecoVision': null, 'Intellivision': null,
+    'Texas Instruments TI-99': null, 'Panasonic M2': null, 'SG-1000': null, 'NEC PC-6000 Series': null,
+    'TRS-80 Color Computer': null, 'TRS-80': null, 'Leapster Explorer/LeadPad Explorer': null, 'AY-3-8606': null,
     'Oculus Quest': 'VR', 'Meta Quest 2': 'VR', 'Meta Quest 3': 'VR', 'Oculus Rift': 'VR', 'Oculus VR': 'VR',
     'PlayStation VR': 'VR', 'PlayStation VR2': 'VR', 'SteamVR': 'VR',
   },

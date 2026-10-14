@@ -11,7 +11,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const config = require('./config.js');
-const { selectGames, buildEntry, steamAppId } = require('./transform.js');
+const { selectGames, buildEntry, steamAppId, demoteBroadTags } = require('./transform.js');
 const { createCache, getTwitchToken, fetchIgdbCandidates, fetchSteamData } = require('./sources.js');
 
 const ROOT = path.join(__dirname, '..');
@@ -46,7 +46,7 @@ async function main() {
 
   const unmapped = new Map();
   const onUnmapped = name => unmapped.set(name, (unmapped.get(name) || 0) + 1);
-  const games = [];
+  let games = [];
   let withSteamTags = 0;
 
   for (const [i, raw] of kept.entries()) {
@@ -63,6 +63,8 @@ async function main() {
     if ((i + 1) % 100 === 0) console.log(`Enriched ${i + 1}/${kept.length}`);
   }
 
+  const { games: demotedGames, demoted } = demoteBroadTags(games, config.broadTagThreshold);
+  games = demotedGames;
   games.sort((a, b) => a.name.localeCompare(b.name) || a.year - b.year);
   const today = new Date().toISOString().slice(0, 10);
   fs.writeFileSync(path.join(ROOT, 'data.js'), renderDataJs(games, today));
@@ -77,6 +79,7 @@ async function main() {
   console.log(`Kept: ${games.length}`);
   console.log(`Excluded: ${excluded.length}`, byReason);
   console.log(`With Steam tags: ${pct(withSteamTags, games.length)}`);
+  console.log(`Broad tags demoted to secondary: ${demoted.join(', ') || 'none'}`);
   console.log(`Null metacritic: ${pct(games.filter(g => g.metacritic == null).length, games.length)}`);
   if (unmapped.size) console.log('Unmapped platforms (add to platformMap?):', Object.fromEntries(unmapped));
 }

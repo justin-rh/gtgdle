@@ -29,6 +29,7 @@ function classify(raw, cfg) {
   const names = [raw.name, ...franchiseNames(raw)];
   const blocked = cfg.blockedFranchises.find(b => names.some(n => startsWithWords(n, b)));
   if (blocked) return `blocked franchise: ${blocked}`;
+  if ((cfg.racingSims || []).some(s => startsWithWords(raw.name, s))) return 'racing sim';
   const genres = (raw.genres || []).map(g => g.name);
   if (genres.includes('Sport') && !cfg.sportAllowlist.some(a => containsWords(raw.name, a))) return 'sport genre';
   return null;
@@ -83,6 +84,26 @@ function deriveTags(raw, steamTags, cfg) {
   const primaryTags = base.slice(0, 5);
   const all = cleanTagList([...primaryTags, ...base.slice(5), ...names(raw.keywords)], cfg);
   return { primaryTags, secondaryTags: all.slice(primaryTags.length, primaryTags.length + 15) };
+}
+
+// Tags appearing in the primary list of more than `threshold` of games are too broad to be a green
+// clue; move them to the front of secondary (capped at 15) so a shared broad tag gives yellow.
+function demoteBroadTags(games, threshold) {
+  const counts = new Map();
+  for (const g of games) for (const t of g.primaryTags) counts.set(normalize(t), (counts.get(normalize(t)) || 0) + 1);
+  const broad = new Set([...counts].filter(([, n]) => n / games.length > threshold).map(([t]) => t));
+  const demoted = [];
+  const out = games.map(g => {
+    const moved = g.primaryTags.filter(t => broad.has(normalize(t)));
+    for (const t of moved) if (!demoted.includes(t)) demoted.push(t);
+    const movedSet = new Set(moved.map(normalize));
+    return {
+      ...g,
+      primaryTags: g.primaryTags.filter(t => !movedSet.has(normalize(t))),
+      secondaryTags: [...moved, ...g.secondaryTags.filter(t => !movedSet.has(normalize(t)))].slice(0, 15),
+    };
+  });
+  return { games: out, demoted };
 }
 
 // ── Other fields ─────────────────────────────────────────────────────────────
@@ -143,6 +164,6 @@ function steamMetacritic(json, appId) {
 
 module.exports = {
   startsWithWords, containsWords, releaseYear, classify, selectGames,
-  cleanTagList, deriveTags, normalizePlatforms, buildEntry,
+  cleanTagList, deriveTags, demoteBroadTags, normalizePlatforms, buildEntry,
   steamAppId, steamSpyTags, steamMetacritic,
 };

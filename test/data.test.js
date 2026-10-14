@@ -22,7 +22,8 @@ test('generated data invariants', { skip }, () => {
     assert.equal(typeof g.id, 'number', where);
     assert.ok(typeof g.name === 'string' && g.name.length, where);
     assert.ok(Number.isInteger(g.year) && g.year >= 1970 && g.year <= 2027, `${where} year ${g.year}`);
-    assert.ok(g.primaryTags.length >= 1 && g.primaryTags.length <= 5, `${where} primaryTags`);
+    assert.ok(g.primaryTags.length <= 5, `${where} primaryTags`);
+    assert.ok(g.primaryTags.length + g.secondaryTags.length >= 1, `${where} has no tags`);
     assert.ok(g.secondaryTags.length <= 15, `${where} secondaryTags`);
     for (const k of ['primaryTags', 'secondaryTags', 'platforms', 'developers']) {
       assert.ok(Array.isArray(g[k]) && g[k].every(s => typeof s === 'string'), `${where} ${k}`);

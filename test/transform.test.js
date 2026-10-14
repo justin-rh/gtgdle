@@ -148,3 +148,44 @@ test('real config: generic Steam tags are dropped so Tags clues stay informative
     ['Puzzle'],
   );
 });
+
+test('real config: racing sims excluded, arcade racers and non-sport misfires kept', () => {
+  const config = require('../scripts/config.js');
+  const sport = [{ name: 'Sport' }, { name: 'Racing' }];
+  for (const name of ['Gran Turismo 7', 'Forza Motorsport 4', 'Project CARS', 'Assetto Corsa', 'Dirt Rally 2.0', 'Colin McRae Rally 2.0']) {
+    assert.equal(T.classify(raw({ name, genres: sport }), config), 'racing sim', name);
+    assert.equal(T.classify(raw({ name, genres: [{ name: 'Racing' }] }), config), 'racing sim', `${name} without Sport genre`);
+  }
+  for (const name of ['Forza Horizon 4', 'Need for Speed: Heat', 'Dirt 3', 'Colin McRae: Dirt 2', 'Grid 2', 'Trackmania', 'Blur',
+    'Yakuza 4', 'Jet Set Radio', 'Beat Saber', 'Nidhogg', "Alto's Adventure", 'Nintendo Switch Sports', '1080° Snowboarding', 'SSX 3']) {
+    assert.equal(T.classify(raw({ name, genres: sport }), config), null, name);
+  }
+  for (const name of ['Football Manager 2024', "WWE '13", 'Fight Night Champion']) {
+    assert.equal(T.classify(raw({ name, genres: sport }), config), 'sport genre', name);
+  }
+});
+
+test('demoteBroadTags moves tags above the threshold from primary to front of secondary', () => {
+  const g = (id, primaryTags, secondaryTags = []) => ({ id, primaryTags, secondaryTags });
+  const games = [
+    g(1, ['Action', 'Metroidvania'], ['Indie']),
+    g(2, ['Action', 'RPG']),
+    g(3, ['Puzzle', 'Action'], ['Action Extra']),
+    g(4, ['RPG', 'Strategy']),
+  ];
+  const { games: out, demoted } = T.demoteBroadTags(games, 0.5);
+  assert.deepEqual(demoted, ['Action']); // 3/4 > 0.5; RPG is 2/4, not above
+  assert.deepEqual(out.map(x => [x.primaryTags, x.secondaryTags]), [
+    [['Metroidvania'], ['Action', 'Indie']],
+    [['RPG'], ['Action']],
+    [['Puzzle'], ['Action', 'Action Extra']],
+    [['RPG', 'Strategy'], []],
+  ]);
+});
+
+test('demoteBroadTags keeps secondary at 15 or fewer', () => {
+  const sec = Array.from({ length: 15 }, (_, i) => `S${i}`);
+  const { games } = T.demoteBroadTags([{ id: 1, primaryTags: ['Action'], secondaryTags: sec }], 0.25);
+  assert.equal(games[0].secondaryTags.length, 15);
+  assert.equal(games[0].secondaryTags[0], 'Action');
+});

@@ -1,0 +1,184 @@
+# id	name	reason  (move games back with forceInclude in scripts/config.js)
+623	Call of Duty 4: Modern Warfare	blocked franchise: Call of Duty
+559	Call of Duty: Modern Warfare 2	blocked franchise: Call of Duty
+545	Call of Duty: Black Ops	blocked franchise: Call of Duty
+979	Call of Duty: Modern Warfare 3	blocked franchise: Call of Duty
+343	Battlefield 3	blocked franchise: Battlefield
+622	Call of Duty 2	blocked franchise: Call of Duty
+625	Call of Duty: World at War	blocked franchise: Call of Duty
+1122	Call of Duty: Black Ops II	blocked franchise: Call of Duty
+1979	Battlefield 4	blocked franchise: Battlefield
+18320	Battlefield 1	blocked franchise: Battlefield
+621	Call of Duty	blocked franchise: Call of Duty
+2033	Call of Duty: Ghosts	blocked franchise: Call of Duty
+352	Battlefield: Bad Company 2	blocked franchise: Battlefield
+6632	Call of Duty: Advanced Warfare	blocked franchise: Call of Duty
+28204	Call of Duty: WWII	blocked franchise: Call of Duty
+9509	Call of Duty: Black Ops III	blocked franchise: Call of Duty
+7360	Rainbow Six Siege	blocked franchise: Rainbow Six
+119177	Call of Duty: Modern Warfare	blocked franchise: Call of Duty
+83728	Battlefield V	blocked franchise: Battlefield
+18968	Call of Duty: Infinite Warfare	blocked franchise: Call of Duty
+277	Battlefield 2	blocked franchise: Battlefield
+326	Medal of Honor: Allied Assault	blocked franchise: Medal of Honor
+7081	Battlefield Hardline	blocked franchise: Battlefield
+949	Call of Duty 3	blocked franchise: Call of Duty
+11171	Tom Clancy's Ghost Recon: Wildlands	blocked franchise: Tom Clancy's Ghost Recon
+556	Medal of Honor	blocked franchise: Medal of Honor
+1594	Gran Turismo	racing sim
+27081	FIFA 18	blocked franchise: FIFA
+7574	FIFA 15	blocked franchise: FIFA
+2920	FIFA 14	blocked franchise: FIFA
+19459	FIFA 17	blocked franchise: FIFA
+240	Battlefield 1942	blocked franchise: Battlefield
+24920	Call of Duty: Modern Warfare Remastered	blocked franchise: Call of Duty
+3078	Sniper Elite V2	blocked franchise: Sniper Elite
+11071	FIFA 16	blocked franchise: FIFA
+137001	Call of Duty: Black Ops Cold War	blocked franchise: Call of Duty
+96209	FIFA 19	blocked franchise: FIFA
+2153	FIFA Soccer 13	blocked franchise: FIFA
+1885	Homefront	blocked franchise: Homefront
+1597	Gran Turismo 2	racing sim
+18366	Sniper Elite 4	blocked franchise: Sniper Elite
+8366	Sniper Elite III	blocked franchise: Sniper Elite
+83727	Call of Duty: Black Ops 4	blocked franchise: Call of Duty
+1314	Medal of Honor: Airborne	blocked franchise: Medal of Honor
+302156	Call of Duty: Black Ops 6	blocked franchise: Call of Duty
+131800	Call of Duty: Warzone	blocked franchise: Call of Duty
+8118	Disney's Aladdin	duplicate of 2473
+260780	Call of Duty: Modern Warfare III	blocked franchise: Call of Duty
+145191	Resident Evil 4	duplicate of 974
+317407	Battlefield 6	blocked franchise: Battlefield
+200165	Call of Duty: Modern Warfare II	blocked franchise: Call of Duty
+1310	Medal of Honor: Pacific Assault	blocked franchise: Medal of Honor
+114287	FIFA 20	blocked franchise: FIFA
+1601	Gran Turismo 4	racing sim
+1307	Medal of Honor	blocked franchise: Medal of Honor
+1306	Medal of Honor: Warfighter	blocked franchise: Medal of Honor
+106805	Call of Duty: Mobile	blocked franchise: Call of Duty
+909	Tom Clancy's Rainbow Six: Vegas	blocked franchise: Tom Clancy's Rainbow Six
+473	Battlefield: Bad Company	blocked franchise: Battlefield
+1853	Tom Clancy's Rainbow Six: Vegas 2	blocked franchise: Tom Clancy's Rainbow Six
+9928	Dirt Rally	racing sim
+642	Colin McRae Rally 2.0	racing sim
+125166	Battlefield 2042	blocked franchise: Battlefield
+1602	Gran Turismo 5	racing sim
+2946	FIFA Soccer 12	blocked franchise: FIFA
+256092	EA Sports FC 24	blocked franchise: EA Sports FC
+2484	Winning Eleven: Pro Evolution Soccer 2007	blocked franchise: Pro Evolution Soccer
+86490	Tetris	duplicate of 8197
+1600	Gran Turismo 3: A-Spec	racing sim
+503	FIFA Soccer 11	blocked franchise: FIFA
+134101	FIFA 21	blocked franchise: FIFA
+1309	Medal of Honor: Frontline	blocked franchise: Medal of Honor
+2941	Pro Evolution Soccer 2013	blocked franchise: Pro Evolution Soccer
+696	FIFA Soccer 07	blocked franchise: FIFA
+705	FIFA: Road to World Cup 98	blocked franchise: FIFA
+118218	Tom Clancy's Ghost Recon: Breakpoint	blocked franchise: Tom Clancy's Ghost Recon
+165067	Call of Duty: Vanguard	blocked franchise: Call of Duty
+7967	Colin McRae Rally	racing sim
+5597	Assetto Corsa	racing sim
+1293	Tom Clancy's Ghost Recon: Future Soldier	blocked franchise: Tom Clancy's Ghost Recon
+699	FIFA 99	blocked franchise: FIFA
+3133	FIFA Soccer 10	blocked franchise: FIFA
+14363	Gran Turismo Sport	racing sim
+1886	Homefront: The Revolution	blocked franchise: Homefront
+5319	Project CARS	racing sim
+22753	Pro Evolution Soccer 2017	blocked franchise: Pro Evolution Soccer
+1367	Sniper: Ghost Warrior	blocked franchise: Sniper: Ghost Warrior
+95062	Call of Duty: Modern Warfare 2 Campaign Remastered	blocked franchise: Call of Duty
+335	Battlefield Vietnam	blocked franchise: Battlefield
+154986	FIFA 22	blocked franchise: FIFA
+349	Battlefield 2142	blocked franchise: Battlefield
+205780	FIFA 23	blocked franchise: FIFA
+3135	FIFA Soccer 08	blocked franchise: FIFA
+4650	Pro Evolution Soccer 2011	blocked franchise: Pro Evolution Soccer
+101006	Gran Turismo 7	racing sim
+1368	Sniper: Ghost Warrior 2	blocked franchise: Sniper: Ghost Warrior
+4649	Pro Evolution Soccer 2010	blocked franchise: Pro Evolution Soccer
+110411	Dirt Rally 2.0	racing sim
+3134	FIFA Soccer 09	blocked franchise: FIFA
+11185	Pro Evolution Soccer 2016	blocked franchise: Pro Evolution Soccer
+7316	Gran Turismo 6	racing sim
+1316	Medal of Honor: Rising Sun	blocked franchise: Medal of Honor
+703	FIFA Soccer 2005	blocked franchise: FIFA
+308698	EA Sports FC 25	blocked franchise: EA Sports FC
+28862	Pro Evolution Soccer 2018	blocked franchise: Pro Evolution Soccer
+8566	Pro Evolution Soccer 2015	blocked franchise: Pro Evolution Soccer
+3068	Forza Motorsport 4	racing sim
+36872	Forza Motorsport 7	racing sim
+2265	WWE SmackDown vs. Raw 2011	blocked franchise: WWE SmackDown
+1308	Medal of Honor: Underground	blocked franchise: Medal of Honor
+3077	Sniper Elite	blocked franchise: Sniper Elite
+4648	Pro Evolution Soccer 2009	blocked franchise: Pro Evolution Soccer
+1294	Tom Clancy's Ghost Recon	blocked franchise: Tom Clancy's Ghost Recon
+700	FIFA Soccer 06	blocked franchise: FIFA
+100359	Pro Evolution Soccer 2019	blocked franchise: Pro Evolution Soccer
+3069	Forza Motorsport 3	racing sim
+1300	Tom Clancy's Ghost Recon Advanced Warfighter	blocked franchise: Tom Clancy's Ghost Recon
+5832	FIFA Street	blocked franchise: FIFA
+4652	Pro Evolution Soccer 2014	blocked franchise: Pro Evolution Soccer
+1842	Tom Clancy's Rainbow Six	blocked franchise: Tom Clancy's Rainbow Six
+11525	NBA 2K16	blocked franchise: NBA 2K
+5833	FIFA Street 2	blocked franchise: FIFA
+3845	Call of Duty 2: Big Red One	blocked franchise: Call of Duty
+7252	WWE SmackDown vs. Raw 2007	blocked franchise: WWE SmackDown
+5329	NBA 2K14	blocked franchise: NBA 2K
+4651	Pro Evolution Soccer 2012	blocked franchise: Pro Evolution Soccer
+4647	Pro Evolution Soccer 2008	blocked franchise: Pro Evolution Soccer
+701	FIFA Soccer 2002: Major League Soccer	blocked franchise: FIFA
+348220	Call of Duty: Black Ops 7	blocked franchise: Call of Duty
+7846	WWE 2K15	blocked franchise: WWE 2K
+114285	NBA 2K20	blocked franchise: NBA 2K
+10964	Sniper: Ghost Warrior 3	blocked franchise: Sniper: Ghost Warrior
+3761	Call of Duty: Finest Hour	blocked franchise: Call of Duty
+7614	NBA 2K15	blocked franchise: NBA 2K
+122080	Football Manager 2020	sport genre
+119422	eFootball PES 2020	blocked franchise: Pro Evolution Soccer
+103218	NBA 2K19	blocked franchise: NBA 2K
+78511	Forza Motorsport	racing sim
+5056	NBA 2K11	blocked franchise: NBA 2K
+116238	Sniper Elite 5	blocked franchise: Sniper Elite
+2131	Forza Motorsport 5	racing sim
+351	Battlefield 1943	blocked franchise: Battlefield
+11057	WWE 2K16	blocked franchise: WWE 2K
+8558	Forza Motorsport 6	racing sim
+5300	WWE SmackDown vs. Raw 2010	blocked franchise: WWE SmackDown
+3136	FIFA Soccer 2004	blocked franchise: FIFA
+41621	Football Manager 2019	sport genre
+18819	NBA 2K17	blocked franchise: NBA 2K
+1301	Tom Clancy's Ghost Recon Advanced Warfighter 2	blocked franchise: Tom Clancy's Ghost Recon
+18323	WWE SmackDown! vs. Raw 2006	blocked franchise: WWE SmackDown
+698	FIFA 2001: Major League Soccer	blocked franchise: FIFA
+6442	WWE Smackdown! Here Comes the Pain	blocked franchise: WWE SmackDown
+3072	Forza Motorsport 2	racing sim
+31558	WWE 2K18	blocked franchise: WWE 2K
+5298	WWE SmackDown vs. Raw 2008	blocked franchise: WWE SmackDown
+350	Battlefield Heroes	blocked franchise: Battlefield
+134599	NBA 2K21	blocked franchise: NBA 2K
+26709	Project CARS 2	racing sim
+26772	NBA 2K18	blocked franchise: NBA 2K
+5299	WWE SmackDown vs. Raw 2009	blocked franchise: WWE SmackDown
+5058	NBA 2K13	blocked franchise: NBA 2K
+266382	Football Manager 2024	sport genre
+116667	F1 2019	blocked franchise: F1
+106274	Sonic the Hedgehog	duplicate of 3192
+5057	NBA 2K12	blocked franchise: NBA 2K
+1375	F1 2010	blocked franchise: F1
+1311	Medal of Honor: European Assault	blocked franchise: Medal of Honor
+936	World Soccer: Winning Eleven 7 International	blocked franchise: Pro Evolution Soccer
+132205	F1 2020	blocked franchise: F1
+7969	Colin McRae Rally 2005	racing sim
+7968	Colin McRae Rally 3	racing sim
+5295	WWE '13	sport genre
+908	Tom Clancy's Rainbow Six 3: Raven Shield	blocked franchise: Tom Clancy's Rainbow Six
+135881	eFootball PES 2021 Season Update	blocked franchise: Pro Evolution Soccer
+102805	WWE 2K19	blocked franchise: WWE 2K
+101439	F1 2018	blocked franchise: F1
+19516	WWE 2K17	blocked franchise: WWE 2K
+583	2002 FIFA World Cup	blocked franchise: FIFA
+217815	Call of Duty: Warzone	blocked franchise: Call of Duty
+54662	Football Manager 2018	sport genre
+8976	Football Manager 2015	sport genre
+8973	Football Manager 2012	sport genre
+4655	2010 FIFA World Cup South Africa	blocked franchise: FIFA
